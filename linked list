@@ -1,1 +1,191 @@
+#include<stdio.h>
+#include<stdbool.h>
+#include<stdlib.h>
+#define _CRT_SECURE_NO_WARNINGS 1
+//单链表的节点结构
+typedef struct Node
+{
+	int x;
+	int data;
+	struct Node* next;
+};
+typedef struct Node node;
+typedef struct Node *Link;
+//(1)单链表的遍历操作
+void displayNode(Link head)
+{
+	Link p = head->next;
+	while (p != NULL)
+	{
+		printf("%d\n", p->x);
+		p = p->next;
+	}
 
+}
+//2.求单链表的元素个数
+int length(Link head)
+{
+	Link p;
+	int count;
+	p = head->next;
+	count = 0;
+	while (p != NULL)
+	{
+		p = p->next;
+		count++;
+	}
+	return count;
+}
+//3.单链表查找操作
+int query(Link head, int x)
+{
+	Link p;
+	p = head->next;
+	bool found = false;
+	while (p != NULL)
+	{
+		if (p->data == x)
+		{
+			printf("%d\n", x);
+			found = true;
+		}
+		p = p->next;
+	}
+	return found;
+}
+//4.链表的插入操作
+bool insertnode(Link head, int i, int x)
+{
+	int count;
+	Link p;
+	 p = head;
+	count = 0;
+	while (p != NULL && count < i - 1)
+	{
+		p = p->next;
+		count++;
+	}
+	if (p == NULL)
+		return false;
+	else
+	{
+		Link newNode = (Link)malloc(sizeof(node));
+		newNode->data = x;
+		newNode->next = p->next;
+		p->next = newNode;
+		return true;
+	}
+
+}
+//5,创建一个单链表 头插法
+/*初始化头节点 head = (Link)malloc(sizeof(Node))
+head->next = NULL*/
+Link newlist(int a[], int n)
+{
+	Link head;
+	head = (Link)malloc(sizeof(node));
+	head->next = NULL;
+	for (int i = 0; i < n; i++)
+	{
+		Link node = (Link)malloc(sizeof(node));
+		node->data = a[i];
+		node->next = head->next;
+		head->next = node;
+	}
+	return head;
+}
+//6.创建一个单链表 尾插法
+//Link newlist(int a[], int n)
+//{
+//	Link rear;
+//	Link head = (Link)malloc(sizeof(node));
+//	head->next = NULL;
+//	rear = head;
+//	for (int i = 0; i < n; i++)
+//	{
+//		Link node = (Link)malloc(sizeof(node));
+//		node->data = a[i];
+//		node->next = NULL;
+//		rear->next = node;
+//		rear = node;
+//	}
+//	rear->next = NULL;
+//	return head;//创建好链表 返回头指针
+//
+//}
+//单链表结点的删除
+bool deleteNode(Link head, int i)
+{
+
+	if (head == NULL|| head->next == NULL)
+	{
+		return false;
+	}
+
+	node* p = head->next;
+	node* q = head;
+/*如果i是数据域的值 */
+	while (p != NULL)
+	{
+		if (p->data == i)
+		{
+			q->next = p->next;
+			free(p);
+			return true;
+		}
+		else {
+			q = p;
+			p = p->next;
+		}
+	}
+	return false;
+	//for (int count = 0; p != NULL && count < i; i++)
+	//{
+	//	q = p;
+	//	p = p->next;
+
+	//}
+	//free(p);
+	//return true;
+}
+//释放
+void freeList(Link* head) {
+	Link current = *head;
+	Link temp;
+
+	while (current != NULL) {
+		temp = current->next;
+		free(current);
+		current = temp;
+	}
+
+	// 确保链表头指针指向NULL
+	*head = NULL;
+}
+int main() {
+	Link head = NULL; // 声明并初始化头指针为 NULL
+
+	// 创建链表并插入节点（这里仅作示例）
+	insertnode(head, 0, 10); // 插入第一个节点
+	insertnode(head, 1, 20);
+
+	// 遍历并打印链表
+	displayNode(head);
+
+	// 获取链表长度
+	int lengthValue = length(head);
+	printf("Length of the list: %d\n", lengthValue);
+
+	// 查找特定值
+	bool found = query(head, 20);
+	if (found) {
+		printf("Value 20 is in the list.\n"); 
+	}
+	else {
+		printf("Value 20 is not in the list.\n");
+	}
+
+	// 在适当的时候释放链表内存（这里省略）
+
+	return 0;
+}

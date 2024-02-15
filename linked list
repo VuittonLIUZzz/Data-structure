@@ -189,3 +189,263 @@ int main() {
 
 	return 0;
 }
+
+
+
+
+
+
+
+
+#define _CRT_SECURE_NO_WARNINGS 1
+#include<stdio.h>
+#include<stdbool.h>
+#include<stdlib.h>
+#include<string.h>
+#define NO_LENGTH 20
+#define NAME_LENGTH 11
+typedef struct Student {
+	char studentNo[20];
+	char studentName[11];
+}st;
+typedef struct Student {
+	char studentNo[20];
+	char studentName[11];
+}st;
+
+typedef struct node {
+	struct Student data;//node结构体里面放了个Student结构体 此处是实例化 不是别名
+	struct node* next;
+}Node,*Link;
+void myMenu() {
+	printf(" * * * * * * * * * 菜     单 * * * * * * * * * *\n");
+	printf("     1 增加学生记录            2 删除学生记录                     \n");
+	printf("     3 查找学生记录            4 修改学生记录                     \n");
+	printf("     5 统计学生人数            6 显示学生记录                     \n");
+	printf("     7 退出系统                                     \n");
+	printf(" * * * * * * * * * * * * * * * * * * * * * * * *\n");
+}
+
+void inputStudent(Link l)
+{
+	printf("请输入学生的学号: \n");
+	scanf("%s", l->data.studentNo);
+	printf("请输入学生的姓名:");
+	scanf("%s", l->data.studentName);
+	l->next = NULL;
+}
+void inputStudentNo(char s[], char no[])
+{
+	printf("请输入要%s的学生学号:", s);
+	scanf("%s", no);
+}
+void displayNode(Link head) {
+	// 填写代码，根据传入的链表head头指针，扫描链表显示所有节点的信息
+	if (head == NULL || head->next == NULL)
+	{
+		printf("暂未录入学生记录");
+
+	}
+	Link p;
+	p = head->next;
+	while (p != NULL)
+	{
+		printf("学生信息为:\n");
+		printf("学号:%s\n", p->data.studentNo);
+		printf("姓名:%s\n", p->data.studentName);
+		p = p->next;
+	}
+}
+bool addNode(Link head)
+{
+	Link p, q;
+	Link node;
+	node = (Link)malloc(sizeof(Node));
+	inputStudent(node); 
+	q = head;
+	p = head->next;
+	if (head->next == NULL)
+	{
+		head->next = node;
+	}
+	else
+	{
+		while (p != NULL)
+		{
+			if (node->data.studentNo < p->data.studentNo)
+			{
+				q->next = node;
+				node->next = p;
+				return true;
+			}
+			else {
+				q = p;
+				p = p->next;
+			}
+		} 
+		//如果没能提前退出循环 则说明之前没有插入 
+		//则当前node结点的学号是最大值
+		//此时插在链表最后面
+		q->next = node;
+	}
+	return true;
+}
+bool delete(Link head)
+{
+	char no[NO_LENGTH];
+	inputStudentNo("删除", no);
+	if (head == NULL || head->next == NULL)
+	{
+		return false;
+	}
+	Link p, q;
+	q = head;
+	p = head->next;
+	while (p != NULL)
+	{
+		if (strcmp(p->data.studentNo, no) == 0)
+		{
+			q->next = p->next;
+			free(p);
+			printf("删除成功!\n");
+			return true;
+		}
+		else
+		{
+			q = p;
+			p = p->next;
+		}
+	}
+}
+bool queryNode(Link head)
+{
+	char no[NO_LENGTH];
+	inputStudentNo("查询", no);
+	for (Link p = head->next; p != NULL; p = p->next)
+	{
+		if (strcmp(p->data.studentNo, no) == 0)
+		{
+			printf("查询成功!\n");
+			printf("该生\n");
+			printf("学号为:%s\n", p->data.studentNo);
+			printf("姓名为:%s\n", p->data.studentName);
+			return true;
+		}
+	}
+	printf("查无此人");
+	return false;
+}
+bool modifyNode(Link head)
+{
+	if (head == NULL || head-> next== NULL)
+	{
+		printf("暂无学生录入");
+	}
+	char no[NO_LENGTH];
+	inputStudentNo("修改", no);
+	for (Link p = head->next; p != NULL; p = p->next)
+	{
+		if (strcmp(p->data.studentNo, no) == 0)
+		{
+			printf("您要修改的学生信息如下 请确认\n");
+			printf("学号:%s\n", p->data.studentNo);
+			printf("姓名:%s\n", p->data.studentName);
+
+			printf("修改选择(学号:1 姓名:2)\n");
+			int y = 0;
+			scanf("%d", &y);
+			switch (y)
+			{
+			case 1:
+				printf("请输入要修改的学号:\n");
+				scanf("%s", p->data.studentNo);
+				break;
+			case 2:
+				printf("请输入要修改的姓名:\n");
+				scanf("%s", p->data.studentName);
+				break;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+int countNode(Link head)
+{
+	int count = 0;
+	for (Link p = head->next; p != NULL; p = p->next)
+	{
+		count++;
+	}
+	printf("现记录学生%d人\n ", count);
+	return count;
+}
+
+void clearLink(Link head)
+{
+	if (head == NULL || head->next == NULL)
+	{
+		return;
+	}
+	Link q;
+	Link p = head->next;
+	while (p != NULL)
+	{
+		q = p->next;
+		free(p);
+		p = q;
+	}
+	free(head);
+	printf("清除成功!\n");
+}
+int main()
+{
+	int select = 0;
+	int count = 0;
+	Link head;
+	char no[20];
+	head = (Link)malloc(sizeof(Node));
+	head->next = NULL;
+	while (1)
+	{
+		myMenu();
+		scanf("%d", &select);
+		switch (select)
+		{
+				case 1:
+					if (addNode(head))
+						printf("成功插入一个学生记录!\n");
+					break;
+				case 2:
+					delete(head);
+					break;
+				case 3:
+					queryNode(head);
+					break;
+				case 4:
+					modifyNode(head);
+					break;
+				case 5:
+					countNode(head);
+					break;
+				case 6:
+					displayNode(head);
+					break;
+				case 7:
+					clearLink(head);
+					exit(0);
+					break;
+				default:
+					printf("请输入正确的选项!\n");
+					break;
+		}
+	}
+	return 0;
+}
+
+
+
+
+
+
+

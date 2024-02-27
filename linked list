@@ -443,7 +443,75 @@ int main()
 	return 0;
 }
 
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct node {
+	int data;
+	struct node* next;
+}Node, * Link;
+int main()
+{
+	int n, m;
+	int i;
+	int answer[100];
+	int count=0;//控制题目答案的下标
+	Link q, p;
+	Link head, tail;
+	head = (Link)malloc(sizeof(Node));
+	head->next = NULL;
+	while (1) {
+		scanf("%d%d", &n, &m);
+		if (n == 0 || m == 0)
+		{
+			free(head);
+			break;
+		}
+		else {
+			tail = head;
+			for (i = 0; i < n; i++)
+			{
+				p = (Link)malloc(sizeof(Node));
+				p->data = i + 1;
+				tail->next = p;//插到尾部
+				p->next = head->next;//建立最后结点的next指向第一个结点
+				tail = p;//tail移动到最后一个节点为下一次插入做准备
+			}
 
+			p = head->next;//p再初始化为最前面节点 
+			q = tail;//tail作为p的前继结点付给q
+			i = 1;
+			//用来剔除猴子的循环
+			while (p != q)
+			{
+				if (i == m)
+				{
+					q->next = q->next->next;
+					free(p);
+					p = q->next;
+					i = 1;
+				}
+				else {
+					q = p;
+					p = p->next;
+					i++;
+				}
+			}
+			head->next = q;//删除第一个结点有可能造成链表不完整
+
+			answer[count] = p->data;
+			count++;
+			free(p);
+			head->next = NULL;
+		}
+
+	}
+	for (i = 0; i < count; i++)
+	{
+		printf("%d\n", answer[i]);
+	}
+	free(head);
+	return 0;
+}
 
 
 
